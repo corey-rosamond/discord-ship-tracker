@@ -2,10 +2,13 @@
 const dotenv = require("dotenv");
 dotenv.config({path: ".env"});
 
-const Discord   = require("discord.js");
 const Database  = require("./configuration/database.js");
 const Locations = require("./controllers/locations");
-const Ships     = require("./controllers/ships")
+const Ships     = require("./controllers/ships");
+const Help      = require("./controllers/help");
+const Command   = require("./command.js");
+const Discord   = require("discord.js");
+const ReplyMessage = require("./replyMessage.js");
 
 Database.connect(); 
 
@@ -30,59 +33,60 @@ client.on("messageCreate", function(message){
         return;
     }
 
-    const commandBody = message.content.slice(prefix.length);
-    const arguments = commandBody.split(' ');
-    const command = arguments.shift().toLowerCase();
-    const resourceType = arguments[0].toLowerCase();
+    const command = new Command(message);
 
-    switch(command)
+    switch(command.get())
     {
         case "add":
-            switch(resourceType)
+            switch(command.type)
             {
                 // Add a ship
-                case "ship":        Ships.add(message, arguments);                      break;
+                case "ship":        Ships.add(message, command);                      break;
                 // Add a location
-                case "location":    Locations.add(message, arguments);                  break;
+                case "location":    Locations.add(message, command);                  break;
                 // Invalid type passed to add command.
-                default:            message.reply(`Invalid Type: ${resourceType}`);     break;
+                default:            message.reply(`Invalid Type: ${command.type}`);     break;
             }
         break; 
+
         case "remove":
-            switch(resourceType)
+            switch(command.type)
             {
                 // Remove ship
-                case "ship":        Ships.remove(message, arguments);                   break;
+                case "ship":        Ships.remove(message, command);                   break;
                 // Remove location
-                case "location":    Locations.remove(message, arguments);               break;
+                case "location":    Locations.remove(message, command);               break;
                 // Invalid type passed to remove command.
-                default:            message.reply(`Invalid Type: ${resourceType}`);     break;
+                default:            message.reply(`Invalid Type: ${command.type}`);     break;
             }
         break;
+
         case "update":
             message.reply("Add will need a type");
         break;
-        case "find":
-            const shipName = arguments[0].toLowerCase();
 
-            message.reply(`find the ship named: ${shipName}`);
+        case "find":
+            message.reply(`find the ship named: ${command.name}`);
         break;
+
         case "list":
-            const listType = arguments[0];
-            switch(arguments[0].toLowerCase())
+            switch(command.type)
             {
                 // List all the ships
-                case "ships":       Ships.list(message, arguments);                     break;
+                case "ships":       Ships.list(message, command);                     break;
                 // List all the locations
-                case "locations":   Locations.list(message, arguments);                 break;
+                case "locations":   Locations.list(message, command);                 break;
                 // Invalid type passed to list
-                default:            message.reply(`Invalid Type: ${listType}`);         break;
+                default:            message.reply(`Invalid Type: ${command.type}`);         break;
             }
         
             break;
+
         case "whatisyourpurpose":
-            message.reply("To serve masters at Arma United!");
+            let replyMessage = new ReplyMessage("To serve my masters at Arma United!");
+            message.reply(replyMessage.get());
         break;
+
         case "help":
             let messageContent = "SpiceNub supported commands\n"
                 + "!help <command>: Shows the help menu if you provide a command it will only show information about the specific command\n" 
@@ -95,6 +99,7 @@ client.on("messageCreate", function(message){
         
             message.reply(messageContent);
         break;
+
         // Default function to catch unrecognized commandes.
         default:                    message.reply(`Unrecognized command`);              break; 
     }

@@ -1,47 +1,52 @@
 const LocationModel = require("../models/locationsModel");
+const ReplyMessage  = require("../replyMessage");
 
 class Locations
 {
-    static async list(message, args)
+    static async list(message, command)
     {
         try
         {
             let locations = await LocationModel.find();
-            let messageContent = "";
+            let replyMessage = new ReplyMessage();
             locations.map(location=>{ 
-                messageContent += "Name: " + location.name + "\tZone: " + location.zone + "\n"; 
+                replyMessage.addLine("Name: " + location.name + "\tZone: " + location.zone);
             });
-            message.reply(messageContent);
+            message.reply(replyMessage.get());
         } catch(error)
         { 
             console.log(error.message); 
         }
     }
 
-    static async add(message, args)
+    static async add(message, command)
     {
         try
         {
-            const name = args[1].toLowerCase();
-            let zone = 1;
-            let location = await LocationModel.create({name, zone});
-            message.reply(`${name} was added in zone: ${zone}`)
+            let location = await LocationModel.create({
+                name: command.name, 
+                zone: command.zone
+            });
+            let replyMessage = new ReplyMessage(`${command.name} was added in zone: ${command.zone}`);
+            message.reply(replyMessage.get());
         } catch(error)
         {
             console.log(error);
         }
     }
 
-    static async remove(message, args)
+    static async remove(message, command)
     {
         try
         {
-            const name = args[1].toLowerCase();
-            let location = await LocationModel.findOne({name: name});
-            console.log(location._id)
-            await LocationModel.remove({_id: location._id});
-            console.log(location.name);
-            message.reply(`${location.name} removed!`);
+            let location = await LocationModel.findOne({
+                name: command.name
+            });
+            await LocationModel.remove({
+                _id: location._id
+            });
+            let replyMessage = new ReplyMessage(`${location.name} removed!`);
+            message.reply(replyMessage.get());
         } catch(error)
         {
             console.log(error);
