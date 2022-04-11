@@ -2,13 +2,17 @@
 const dotenv = require("dotenv");
 dotenv.config({path: ".env"});
 
-const Database  = require("./configuration/database.js");
-const Locations = require("./controllers/locations");
-const Ships     = require("./controllers/ships");
-const Help      = require("./controllers/help");
-const Command   = require("./command.js");
-const Discord   = require("discord.js");
-const ReplyMessage = require("./replyMessage.js");
+const Database      = require("./configuration/database.js");
+const Locations     = require("./controllers/locations");
+const Ships         = require("./controllers/ships");
+const ShipTypes     = require("./controllers/shipTypes");
+const Zones         = require("./controllers/zones");
+const Help          = require("./controllers/help");
+
+const ReplyMessage  = require("./replyMessage.js");
+const Command       = require("./command.js");
+
+const Discord       = require("discord.js");
 
 Database.connect(); 
 
@@ -41,9 +45,13 @@ client.on("messageCreate", function(message){
             switch(command.type)
             {
                 // Add a ship
-                case "ship":        Ships.add(message, command);                      break;
+                case "ship":        Ships.add(message, command);                        break;
+                // Add Ship type
+                case "shiptype":    ShipTypes.add(message, command);                    break;
                 // Add a location
-                case "location":    Locations.add(message, command);                  break;
+                case "location":    Locations.add(message, command);                    break;
+                // Add a zone
+                case "zone":        Zones.add(message, command);                        break;
                 // Invalid type passed to add command.
                 default:            message.reply(`Invalid Type: ${command.type}`);     break;
             }
@@ -53,9 +61,13 @@ client.on("messageCreate", function(message){
             switch(command.type)
             {
                 // Remove ship
-                case "ship":        Ships.remove(message, command);                   break;
+                case "ship":        Ships.remove(message, command);                     break;
+                // Remove ship type
+                case "shiptype":    ShipTypes.remove(message, command);                 break;
                 // Remove location
-                case "location":    Locations.remove(message, command);               break;
+                case "location":    Locations.remove(message, command);                 break;
+                // Remove Location
+                case "zone":        Zones.remove(message, command);                     break;
                 // Invalid type passed to remove command.
                 default:            message.reply(`Invalid Type: ${command.type}`);     break;
             }
@@ -73,11 +85,15 @@ client.on("messageCreate", function(message){
             switch(command.type)
             {
                 // List all the ships
-                case "ships":       Ships.list(message, command);                     break;
+                case "ships":       Ships.list(message, command);                       break;
+                // List all ship types
+                case "shiptype":    ShipTypes.list(message, command);                   break;
                 // List all the locations
-                case "locations":   Locations.list(message, command);                 break;
+                case "locations":   Locations.list(message, command);                   break;
+                // List all zones
+                case "zones":       Zones.list(message, command);                       break;
                 // Invalid type passed to list
-                default:            message.reply(`Invalid Type: ${command.type}`);         break;
+                default:            message.reply(`Invalid Type: ${command.type}`);     break;
             }
         
             break;
