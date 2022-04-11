@@ -9,13 +9,13 @@ class Locations
         {
             let locations = await LocationModel.find();
             let replyMessage = new ReplyMessage();
-            locations.map(location=>{ 
+            locations.map(location => { 
                 replyMessage.addLine("Name: " + location.name + "\tZone: " + location.zone);
             });
             message.reply(replyMessage.get());
         } catch(error)
-        { 
-            console.log(error.message); 
+        {
+            console.log(error.message);
         }
     }
 

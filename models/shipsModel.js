@@ -11,7 +11,7 @@ const shipsSchema = new mongoose.Schema(
             unique: true
         },
         location: {
-            type: Number,
+            type: mongoose.Schema.ObjectId,
             default: 1,
         }
     },

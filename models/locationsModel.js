@@ -11,7 +11,7 @@ const locationsSchema = new mongoose.Schema(
             unique: true
         },
         zone: {
-            type: Number,
+            type: mongoose.Schema.ObjectId,
             default: 1,
         }
     },
