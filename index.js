@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config({path: ".env"});
 
 const Database      = require("./configuration/database.js");
+
 const Locations     = require("./controllers/locations");
 const Ships         = require("./controllers/ships");
 const ShipTypes     = require("./controllers/shipTypes");
@@ -99,7 +100,7 @@ client.on("messageCreate", function(message){
             break;
 
         case "whatisyourpurpose":
-            let replyMessage = new ReplyMessage("To serve my masters at Arma United!");
+            let replyMessage = new ReplyMessage("To serve!");
             message.reply(replyMessage.get());
         break;
 

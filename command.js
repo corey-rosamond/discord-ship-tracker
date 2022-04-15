@@ -18,6 +18,7 @@ class Command
             return;
         }
         let parts = this._commandString.split('-');
+        this._command = parts[0].trim().toLowerCase();
         parts.shift();
         parts.map(part => {
             let [action, value] = part.trim().toLowerCase().split("=");
